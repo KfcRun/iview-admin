@@ -16,28 +16,30 @@
 </template>
 
 <script>
-import LoginForm from '_c/login-form'
-import { mapActions } from 'vuex'
-export default {
-  components: {
-    LoginForm
-  },
-  methods: {
-    ...mapActions([
-      'handleLogin',
-      'getUserInfo'
-    ]),
-    handleSubmit ({ userName, password }) {
-      this.handleLogin({ userName, password }).then(res => {
-        this.getUserInfo().then(res => {
-          this.$router.push({
-            name: this.$config.homeName
+  import LoginForm from '@scp/login-form'
+  import {mapActions} from 'vuex'
+
+  export default {
+    components: {
+      LoginForm
+    },
+    methods: {
+      ...mapActions([
+        'handleLogin',
+        'handleUserInfo',
+        'verifyCode'
+      ]),
+      handleSubmit({principal, credential, vcode}) {
+        this.handleLogin({principal, credential, vcode}).then(res => {
+          this.handleUserInfo().then(res => {
+            this.$router.push({
+              name: this.$config.homeName
+            })
           })
         })
-      })
+      }
     }
   }
-}
 </script>
 
 <style>

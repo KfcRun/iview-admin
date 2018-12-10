@@ -268,7 +268,7 @@ export default [
       }
     ]
   },
-  {
+  /*{ 注释掉I18N问题
     path: '/i18n',
     name: 'i18n',
     meta: {
@@ -286,7 +286,7 @@ export default [
         component: () => import('@/view/i18n/i18n-page.vue')
       }
     ]
-  },
+  },*/
   {
     path: '/error_store',
     name: 'error_store',

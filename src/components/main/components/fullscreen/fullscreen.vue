@@ -11,7 +11,7 @@ export default {
   name: 'Fullscreen',
   computed: {
     showFullScreenBtn () {
-      return window.navigator.userAgent.indexOf('MSIE') < 0
+      return window.navigator.userAgent.indexOf('MSIE') < 0 && window.navigator.userAgent.indexOf("rv:11") < 0
     }
   },
   props: {

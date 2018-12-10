@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import InforCard from '_c/info-card'
-import CountTo from '_c/count-to'
-import { ChartPie, ChartBar } from '_c/charts'
+import InforCard from '@scp/info-card'
+import CountTo from '@scp/count-to'
+import { ChartPie, ChartBar } from '@scp/charts'
 import Example from './example.vue'
 export default {
   name: 'home',

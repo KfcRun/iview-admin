@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import SplitPane from '_c/split-pane'
-import Icons from '_c/icons'
+import SplitPane from '@scp/split-pane'
+import Icons from '@scp/icons'
 export default {
   name: 'split_pane_page',
   components: {

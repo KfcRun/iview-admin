@@ -1,4 +1,4 @@
-import CommonIcon from '_c/common-icon'
+import CommonIcon from '@scp/common-icon'
 import { showTitle } from '@/libs/util'
 export default {
   components: {

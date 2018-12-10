@@ -2,22 +2,18 @@ export default {
   /**
    * @description 配置显示在浏览器标签的title
    */
-  title: 'iView-admin',
+  title: 'PMO项目管理',
   /**
    * @description token在Cookie中存储的天数，默认1天
    */
-  cookieExpires: 1,
-  /**
-   * @description 是否使用国际化，默认为false
-   *              如果不使用，则需要在路由中给需要在菜单中展示的路由设置meta: {title: 'xxx'}
-   *              用来在菜单中显示文字
-   */
-  useI18n: true,
+  cookieExpires: 7,
+
   /**
    * @description api请求基础路径
    */
   baseUrl: {
-    dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
+    // dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
+    dev: 'http://127.0.0.1:18096/',
     pro: 'https://produce.com'
   },
   /**
@@ -31,6 +27,13 @@ export default {
     'error-store': {
       showInHeader: true, // 设为false后不会在顶部显示错误日志徽标
       developmentOff: true // 设为true后在开发环境不会收集错误信息，方便开发中排查错误
+    },
+    'full-screen': {
+      showFullScreen: true // 显示全屏按钮
+    },
+    'i18n': {
+      useI18n: false, //  启用/禁止国际化模块
+      showI18nParse: false  // 显示语言替换按钮
     }
   }
 }

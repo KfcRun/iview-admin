@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-// import { Spin } from 'iview'
+import { Spin } from 'iview'
 const addErrorLog = errorInfo => {
   const { statusText, status, request: { responseURL } } = errorInfo
   let info = {
@@ -29,7 +29,7 @@ class HttpRequest {
   destroy (url) {
     delete this.queue[url]
     if (!Object.keys(this.queue).length) {
-      // Spin.hide()
+      Spin.hide()
     }
   }
   interceptors (instance, url) {
