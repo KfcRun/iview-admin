@@ -1,13 +1,15 @@
 import Cookies from 'js-cookie'
-// cookie保存的天数
 import config from '@/config'
-import { forEach, hasOneOf, objEqual } from '@/libs/tools'
-const { title, cookieExpires, plugin } = config
+import {Modal} from 'iview'
+import {forEach, hasOneOf, objEqual} from '@/libs/tools'
+
+const plugin = config.plugin
+const ProName = config.title
 
 export const TOKEN_KEY = 'token'
 
 export const setToken = (token) => {
-  Cookies.set(TOKEN_KEY, token, {expires: cookieExpires || 1})
+  Cookies.set(TOKEN_KEY, token, {expires: config.cookieExpires || 1})
 }
 
 export const getToken = () => {
@@ -20,41 +22,13 @@ export const hasChild = (item) => {
   return item.children && item.children.length !== 0
 }
 
-const showThisMenuEle = (item, access) => {
-  if (item.meta && item.meta.access && item.meta.access.length) {
-    if (hasOneOf(item.meta.access, access)) return true
-    else return false
-  } else return true
-}
-/**
- * @param {Array} list 通过路由列表得到菜单列表
- * @returns {Array}
- */
-export const getMenuByRouter = (list, access) => {
-  let res = []
-  forEach(list, item => {
-    if (!item.meta || (item.meta && !item.meta.hideInMenu)) {
-      let obj = {
-        icon: (item.meta && item.meta.icon) || '',
-        name: item.name,
-        meta: item.meta
-      }
-      if ((hasChild(item) || (item.meta && item.meta.showAlways)) && showThisMenuEle(item, access)) {
-        obj.children = getMenuByRouter(item.children, access)
-      }
-      if (item.meta && item.meta.href) obj.href = item.meta.href
-      if (showThisMenuEle(item, access)) res.push(obj)
-    }
-  })
-  return res
-}
 
 /**
  * @param {Array} routeMetched 当前路由metched
  * @returns {Array}
  */
 export const getBreadCrumbList = (route, homeRoute) => {
-  let homeItem = { ...homeRoute, icon: homeRoute.meta.icon }
+  let homeItem = {...homeRoute, icon: homeRoute.meta.icon}
   let routeMetched = route.matched
   if (routeMetched.some(item => item.name === homeRoute.name)) return [homeItem]
   let res = routeMetched.filter(item => {
@@ -94,13 +68,15 @@ export const getRouteTitleHandled = (route) => {
 }
 
 export const showTitle = (item, vm) => {
-  let { title, __titleIsFunction__ } = item.meta
-  if (!title) return
+  let {title, __titleIsFunction__} = item.meta
+  if (!title) {
+    title = (item.meta && item.meta.title) || item.name
+  }
   if (plugin['i18n'].useI18n) {
-    if (title.includes('{{') && title.includes('}}') &&  plugin['i18n'].useI18n) title = title.replace(/({{[\s\S]+?}})/, (m, str) => str.replace(/{{([\s\S]*)}}/, (m, _) => vm.$t(_.trim())))
+    if (title.includes('{{') && title.includes('}}') && plugin['i18n'].useI18n) title = title.replace(/({{[\s\S]+?}})/, (m, str) => str.replace(/{{([\s\S]*)}}/, (m, _) => vm.$t(_.trim())))
     else if (__titleIsFunction__) title = item.meta.title
     else title = vm.$t(item.name)
-  } else title = (item.meta && item.meta.title) || item.name
+  }
   return title
 }
 
@@ -144,10 +120,10 @@ export const getHomeRoute = (routers, homeName = 'home') => {
  * @description 如果该newRoute已经存在则不再添加
  */
 export const getNewTagList = (list, newRoute) => {
-  const { name, path, meta } = newRoute
+  const {name, path, meta} = newRoute
   let newList = [...list]
   if (newList.findIndex(item => item.name === name) >= 0) return newList
-  else newList.push({ name, path, meta })
+  else newList.push({name, path, meta})
   return newList
 }
 
@@ -394,6 +370,20 @@ export const scrollTop = (el, from = 0, to, duration = 500, endCallback) => {
 export const setTitle = (routeItem, vm) => {
   const handledRoute = getRouteTitleHandled(routeItem)
   const pageTitle = showTitle(handledRoute, vm)
-  const resTitle = pageTitle ? `${title} - ${pageTitle}` : title
+  const resTitle = pageTitle ? `${ProName} - ${pageTitle}` : ProName
   window.document.title = resTitle
+}
+
+export const beforeClose = {
+  before_close_normal: (resolve) => {
+    Modal.confirm({
+      title: '确定要关闭这一页吗',
+      onOk: () => {
+        resolve(true)
+      },
+      onCancel: () => {
+        resolve(false)
+      }
+    })
+  }
 }

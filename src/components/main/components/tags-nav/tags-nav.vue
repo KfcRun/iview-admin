@@ -47,8 +47,7 @@
 </template>
 
 <script>
-import { showTitle, routeEqual } from '@/libs/util'
-import beforeClose from '@/router/before-close'
+import { showTitle, routeEqual,beforeClose } from '@/libs/util'
 export default {
   name: 'TagsNav',
   props: {

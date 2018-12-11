@@ -13,23 +13,27 @@ import parentView from '@/components/parent-view'
  *  notCache: (false) 设为true后页面在切换标签后不会缓存，如果需要缓存，无需设置这个字段，而且需要设置页面组件name属性和路由配置的name一致
  *  access: (null) 可访问该页面的权限数组，当前路由设置的权限会影响子路由
  *  icon: (-) 该页面在左侧菜单、面包屑和标签导航处显示的图标，如果是自定义图标，需要在图标名称前加下划线'_'
- *  beforeCloseName: (-) 设置该字段，则在关闭当前tab页时会去'@/router/before-close.js'里寻找该字段名对应的方法，作为关闭前的钩子函数
+ *  beforeCloseName: (-) 设置该字段，则在关闭当前tab页时会去'@/lib/util/before-close'里寻找该字段名对应的方法，作为关闭前的钩子函数
  * }
+ * obj 描述当前路由信息，如果没有子集时，创建临时子集，覆盖path等信息
+ *  item 如果多个时 为多级菜单选择，如果单个时 表示补充修饰obj，接口不携带component属性
  */
 
 export default [
+  //登陆-router
   {
     path: '/login',
     name: 'login',
     meta: {
-      title: 'Login - 登录',
+      title: '登录',
       hideInMenu: true
     },
     component: () => import('@/view/login/login.vue')
   },
+  //主页-router
   {
     path: '/',
-    name: '_home',
+    name: 'index',
     redirect: '/home',
     component: Main,
     meta: {
@@ -50,6 +54,35 @@ export default [
       }
     ]
   },
+  //通用授权
+  {
+    path: '/401',
+    name: 'error_401',
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import('@/view/error-page/401.vue')
+  },
+  //未知页面-router
+  {
+    path: '*',
+    name: 'error_404',
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import('@/view/error-page/404.vue')
+  },
+  //通用错误-router
+  {
+    path: '/500',
+    name: 'error_500',
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import('@/view/error-page/500.vue')
+  },
+  // 以下业务
+
   {
     path: '',
     name: 'doc',
@@ -268,7 +301,7 @@ export default [
       }
     ]
   },
-  /*{ 注释掉I18N问题
+  {
     path: '/i18n',
     name: 'i18n',
     meta: {
@@ -286,7 +319,7 @@ export default [
         component: () => import('@/view/i18n/i18n-page.vue')
       }
     ]
-  },*/
+  },
   {
     path: '/error_store',
     name: 'error_store',
@@ -435,29 +468,7 @@ export default [
         component: () => import('@/view/argu-page/query.vue')
       }
     ]
-  },
-  {
-    path: '/401',
-    name: 'error_401',
-    meta: {
-      hideInMenu: true
-    },
-    component: () => import('@/view/error-page/401.vue')
-  },
-  {
-    path: '/500',
-    name: 'error_500',
-    meta: {
-      hideInMenu: true
-    },
-    component: () => import('@/view/error-page/500.vue')
-  },
-  {
-    path: '*',
-    name: 'error_404',
-    meta: {
-      hideInMenu: true
-    },
-    component: () => import('@/view/error-page/404.vue')
   }
+
+
 ]

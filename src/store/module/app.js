@@ -1,22 +1,30 @@
 import {
+  beforeClose,
   getBreadCrumbList,
-  setTagNavListInLocalstorage,
-  getMenuByRouter,
-  getTagNavListFromLocalstorage,
   getHomeRoute,
   getNextRoute,
-  routeHasExist,
-  routeEqual,
   getRouteTitleHandled,
+  getTagNavListFromLocalstorage,
+  getToken,
+  localRead,
   localSave,
-  localRead
+  routeEqual,
+  routeHasExist,
+  setTagNavListInLocalstorage,
+  setToken
 } from '@/libs/util'
-import beforeClose from '@/router/before-close'
-import { saveErrorLogger } from '@/api/data'
-import router from '@/router'
+
+import {canAccessMenu} from '@/libs/menu'
+
 import routers from '@/router/routers'
+import router from '@/router'
 import config from '@/config'
-const { homeName } = config
+
+import {saveErrorLogger} from '@/api/data'
+
+import {getMenuTree} from '@/api/menu'
+
+const {homeName} = config
 
 const closePage = (state, route) => {
   const nextRoute = getNextRoute(state.tagNavList, route)
@@ -33,20 +41,29 @@ export default {
     homeRoute: {},
     local: localRead('local'),
     errorList: [],
+    menuList: [],
+    hasMenu: false,
     hasReadErrorPage: false
   },
   getters: {
-    menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access),
-    errorCount: state => state.errorList.length
+    menuList: state => state.menuList,
+    errorCount: state => state.errorList.length,
   },
   mutations: {
-    setBreadCrumb (state, route) {
+    setMenuData(state, list) {
+      state.menuList = list
+    },
+
+    setHasMenu(state, status) {
+      state.hasMenu = status
+    },
+    setBreadCrumb(state, route) {
       state.breadCrumbList = getBreadCrumbList(route, state.homeRoute)
     },
-    setHomeRoute (state, routes) {
+    setHomeRoute(state, routes) {
       state.homeRoute = getHomeRoute(routes, homeName)
     },
-    setTagNavList (state, list) {
+    setTagNavList(state, list) {
       let tagList = []
       if (list) {
         tagList = [...list]
@@ -60,7 +77,7 @@ export default {
       state.tagNavList = tagList
       setTagNavListInLocalstorage([...tagList])
     },
-    closeTag (state, route) {
+    closeTag(state, route) {
       let tag = state.tagNavList.filter(item => routeEqual(item, route))
       route = tag[0] ? tag[0] : null
       if (!route) return
@@ -74,7 +91,7 @@ export default {
         closePage(state, route)
       }
     },
-    addTag (state, { route, type = 'unshift' }) {
+    addTag(state, {route, type = 'unshift'}) {
       let router = getRouteTitleHandled(route)
       if (!routeHasExist(state.tagNavList, router)) {
         if (type === 'push') state.tagNavList.push(router)
@@ -85,21 +102,21 @@ export default {
         setTagNavListInLocalstorage([...state.tagNavList])
       }
     },
-    setLocal (state, lang) {
+    setLocal(state, lang) {
       localSave('local', lang)
       state.local = lang
     },
-    addError (state, error) {
+    addError(state, error) {
       state.errorList.push(error)
     },
-    setHasReadErrorLoggerStatus (state, status = true) {
+    setHasReadErrorLoggerStatus(state, status = true) {
       state.hasReadErrorPage = status
     }
   },
   actions: {
-    addErrorLog ({ commit, rootState }, info) {
+    addErrorLog({commit, rootState}, info) {
       if (!window.location.href.includes('error_logger_page')) commit('setHasReadErrorLoggerStatus', false)
-      const { user: { token, userId, userName } } = rootState
+      const {user: {token, userId, userName}} = rootState
       let data = {
         ...info,
         time: Date.parse(new Date()),
@@ -109,6 +126,21 @@ export default {
       }
       saveErrorLogger(info).then(() => {
         commit('addError', data)
+      })
+    },
+    // 获取菜单
+    setMenuToken({commit, state, rootState}) {
+
+      return new Promise((resolve, reject) => {
+        getMenuTree(getToken()).then((res) => {
+          // todo 方式一  由接口处理菜单数据
+          console.log(res.data)
+          //commit("setMenuData", showAccessMenu(res.data.data.rows, rootState.user.access))
+          // todo 方式二  加载routers内路由信息，生成菜单数据
+          commit("setMenuData", canAccessMenu(routers, rootState.user.access))
+        }).catch(err => {
+          reject(err)
+        })
       })
     }
   }

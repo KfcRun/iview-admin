@@ -9,7 +9,6 @@ export default {
     userName: '',
     userId: '',
     avatorImgPath: '',
-    token: getToken(),
     access: '',
     hasGetInfo: false,
     unreadCount: 0,
@@ -32,7 +31,6 @@ export default {
       state.access = access
     },
     setToken(state, token) {
-      state.token = token
       setToken(token)
     },
     setHasGetInfo(state, status) {
@@ -102,7 +100,7 @@ export default {
     // 退出登录
     handleLogOut({state, commit}) {
       return new Promise((resolve, reject) => {
-        deleteToken(state.token).then(() => {
+        deleteToken(getToken()).then(() => {
           commit('setToken', '')
           commit('setAccess', [])
           resolve()
@@ -115,12 +113,12 @@ export default {
     handleUserInfo({state, commit}) {
       return new Promise((resolve, reject) => {
         try {
-          parseToken(state.token).then(res => {
+          parseToken(getToken()).then(res => {
             const data = res.data
-            /*commit('setAvator', data.avator)
-            commit('setUserName', data.name)
-            commit('setUserId', data.user_id)
-            commit('setAccess', data.access)*/
+            commit('setUserId', 'super_admin_id')
+            commit('setAvator', 'https://file.iviewui.com/dist/a0e88e83800f138b94d2414621bd9704.png')
+            commit('setAccess', ['super_admin', 'admin'])
+            commit('setUserName', 'super_admin')
             commit('setHasGetInfo', true)
             resolve(data)
           }).catch(err => {

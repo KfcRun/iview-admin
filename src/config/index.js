@@ -32,8 +32,8 @@ export default {
       showFullScreen: true // 显示全屏按钮
     },
     'i18n': {
-      useI18n: false, //  启用/禁止国际化模块
-      showI18nParse: false  // 显示语言替换按钮
+      useI18n: true, //  启用/禁止国际化模块
+      showI18nParse: true  // 显示语言替换按钮
     }
   }
 }
